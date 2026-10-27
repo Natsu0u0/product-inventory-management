@@ -1,0 +1,72 @@
+
+# Composeで管理するコンテナ（サービス）の定義
+services:
+  
+  
+  # フロントエンド：React + TypeScript
+  frontend:
+    # Dockerイメージを作成するための設定
+    build:
+      # ビルドに使用するファイルがあるフォルダ
+      # このフォルダ内のDockerfileを使用する
+      context: ./frontend
+
+    # PC側のポート : コンテナ側のポート
+    # ブラウザから http://localhost:5173/ でアクセスする
+    ports:
+      - "5173:5173"
+
+    # PCとコンテナ間でファイルを共有する設定
+    volumes:
+      # PC側のfrontendフォルダをコンテナ内の/appに反映する
+      # ソースコードの変更をコンテナ側に反映させるため
+      - ./frontend:/app
+
+      # コンテナ内のnode_modulesを別のボリュームとして保持する
+      # 上のフォルダ共有によって依存関係が隠れてしまうのを防ぐ
+      - /app/node_modules
+
+
+  # バックエンド：Python + FastAPI
+  backend:
+    # Dockerイメージを作成するための設定
+    build:
+      # ビルドに使用するファイルがあるフォルダ
+      # このフォルダ内のDockerfileを使用する
+      context: ./backend
+
+    # PC側のポート : コンテナ側のポート
+    # ブラウザから http://localhost:8000/docs でAPIの説明画面を確認する
+    ports:
+      - "8000:8000"
+
+    # データベースへの接続情報
+    environment:
+      DB_HOST: db
+      DB_NAME: inventory
+      DB_USER: appuser
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+
+      
+  # データベース：PostgreSQL
+  db:
+    # PostgreSQL公式イメージを使用する
+    image: postgres:16
+    # 初期設定用の環境変数
+    environment:
+      POSTGRES_DB: inventory
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    # PC側から直接DBに接続する必要はないため、portsは設定しない
+    # DBのデータをコンテナ再作成後も保持する
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # 初回起動時に実行するSQLファイル
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+# DBのデータを保持する名前付きボリューム
+volumes:
+  postgres_data:
+
+
+

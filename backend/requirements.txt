@@ -1,0 +1,8 @@
+#APIを作るライブラリ
+fastapi
+
+#FastAPIを起動するためのサーバー
+uvicorn[standard]
+
+#PythonからPostgreSQLに接続
+psycopg[binary]
