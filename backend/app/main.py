@@ -1,8 +1,6 @@
 # ==================
 # API実行・アプリケーション管理
 # ==================
-
-# FastAPIをインポート
 from fastapi import FastAPI
 
 # DB接続関数をインポート
@@ -32,7 +30,15 @@ def read_root():
 @app.get("/db-check")
 def check_database():
     try:
-        with closing(get_connection()):
-            return {"message": "データベース接続成功"}
+        with closing(get_connection()) as connection:
+            with closing(connection.cursor()) as cursor:
+                cursor.execute("SELECT 1")
+                result = cursor.fetchone()
+
+                if result == (1,):
+                    return {"message": "データベース接続・SQL実行成功"}
+
+                else:
+                   return {"message": "データベース接続・SQL実行失敗"} 
     except Exception as e:
         return {"message": "データベース接続失敗", "error": str(e)}

@@ -16,3 +16,8 @@ Thumbs.db
 # Node.js
 node_modules/
 dist/
+
+# VS Code
+.vscode/
+# VS Code
+.vscode/

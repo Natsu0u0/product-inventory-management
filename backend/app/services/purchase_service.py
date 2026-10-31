@@ -10,7 +10,7 @@ from app.repositories.purchase_repository import update_purchase_history as repo
 
 # 仕入履歴の登録・更新処理
 def create_purchase_history(history):
-    status = "画面から送られてくるステータス"
+    status = history.status
 
     # 新規・追加の場合
     if status == "新規" or status == "追加":

@@ -18,7 +18,8 @@ def get_inventory_for_update(cursor, product_id):
     # 対象商品の在庫を取得してロック
     cursor.execute(
         """
-        SELECT inventory_id
+        SELECT inventory_id,
+        stock_quantity
         FROM inventories
         WHERE product_id = %s
         FOR UPDATE
@@ -60,9 +61,11 @@ def create_inventory(cursor, product_id, quantity):
 
 # 在庫数量を加算する
 def add_inventory_quantity(cursor, product_id, quantity):
+    
     cursor.execute(
         """
         UPDATE inventories
+        ###在庫数量を計算する(渡された quantity がプラスでもマイナスでも対応できる)
         SET stock_quantity = stock_quantity + %s,
             updated_at = CURRENT_DATE,
             updated_by = %s

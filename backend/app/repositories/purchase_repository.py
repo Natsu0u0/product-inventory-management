@@ -23,6 +23,35 @@ from app.repositories.inventory_repository import (
 
 
 # ==================
+# 仕入履歴の情報を取得
+# ==================
+
+# 仕入履歴レコードの存在確認
+def get_purchase_history(cursor, purchase_id):
+    # DBに接続
+    # 仕入履歴レコードの存在確認
+    cursor.execute(
+        """
+        SELECT status, purchase_quantity
+        FROM purchase_history
+        WHERE purchase_id = %s
+        """,
+        (purchase_id,)
+    )
+
+    #取得した結果1行を受け取る
+    purchase_history_data = cursor.fetchone()
+
+    #purchase_history_dataがNoneの場合はNoneを返す
+    if purchase_history_data == None:
+        return None, None
+
+    #purchase_history_dataがNoneでない場合はstatusとpurchase_quantityを返す
+    else:
+        return purchase_history_data[0], purchase_history_data[1]
+
+
+# ==================
 # 在庫管理に商品が存在しているか確認
 # ==================
 
@@ -35,7 +64,6 @@ def exists_inventory(product_id):
             # 在庫レコードの存在確認
             cursor.execute(
                 """
-                ## 在庫レコードの存在確認
                 SELECT EXISTS (
                     SELECT 1
                     FROM inventories
@@ -45,8 +73,8 @@ def exists_inventory(product_id):
                 (product_id,)
             )
             # 取得した1行を受け取る
-            result = cursor.fetchone()
-            return result[0]
+            inventory_exists = cursor.fetchone()
+            return inventory_exists[0]
 
 
 # ==================
@@ -69,7 +97,6 @@ def create_purchase_history(history):
             # 仕入履歴を登録
             cursor.execute(
                 """
-                ### 仕入履歴を登録
                 INSERT INTO purchase_history (
                     supplier_id,
                     product_id,
@@ -81,15 +108,15 @@ def create_purchase_history(history):
                     created_at,
                     created_by
                 )
-                ### 登録する値
                 VALUES (
-                    %s, %s, DEFAULT, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s, %s,
                     CURRENT_DATE, %s
                 )
                 """,
                 (
                     history.supplier_id,
                     history.product_id,
+                    history.status,
                     history.purchase_quantity,
                     history.notes,
                     supplier_name,
@@ -98,10 +125,10 @@ def create_purchase_history(history):
                 )
             )
 
-            # 対象商品の在庫を取得してロック
+            # 対象商品の在庫を取得してDBロック
             inventory = get_inventory_for_update(
                 cursor,
-                history.product_id
+                history.product_id,
             )
 
             # 在庫レコードが存在しない場合は新規登録
@@ -131,51 +158,82 @@ def create_purchase_history(history):
 # 仕入履歴を更新する
 def update_purchase_history(history):
     # DBに接続
-        with closing(get_connection()) as conn:
-            # SQLを操作するカーソルを作成
-            with closing(conn.cursor()) as cursor:
+    with closing(get_connection()) as conn:
+        # SQLを操作するカーソルを作成
+        with closing(conn.cursor()) as cursor:
+            # DBから仕入履歴を取得
+            previous_status, previous_purchase_quantity = get_purchase_history(
+                cursor,
+                history.purchase_id
+            )
+
+            # DBに登録されているステータスが存在しない場合はエラー
+            if previous_status is None:
+                raise ValueError("指定された仕入履歴IDは存在しません。")
+
+            else:
+                if previous_status == "キャンセル" and history.status == previous_status:
+                    # 仕入履歴がキャンセル済みの場合はエラーを返す
+                    raise ValueError("指定された仕入履歴IDはキャンセル済みです。")
+                    
+                # 対象商品の在庫を取得してロック
+                inventory_data = get_inventory_for_update(
+                    cursor,
+                    history.product_id
+                )
+
+            # 在庫レコードが存在する場合は数量を加算
+            if inventory_data is not None:
+                stock_quantity = inventory_data[1]
+                if history.status == "修正":
+                    # 修正前後の仕入数量の差分を計算
+                    quantity_difference = (
+                        history.purchase_quantity - previous_purchase_quantity
+                    )
+
+                    # 修正後の仕入数量が0の場合はエラー
+                    if history.purchase_quantity <= 0:
+                        raise ValueError("入力値エラー。")
+                    
+                elif history.status == "キャンセル":
+                    # キャンセル前の仕入数量を在庫から減算
+                    quantity_difference = 0 - previous_purchase_quantity
+
+                updated_stock_quantity = stock_quantity + quantity_difference
+                if updated_stock_quantity < 0:
+                    # 在庫数量がマイナスになる場合はエラー
+                    raise ValueError("在庫数量がマイナスになります。")
+
                 # 仕入履歴を更新
                 cursor.execute(
                     """
-                    ### 仕入履歴を更新
                     UPDATE purchase_history
                     SET status = %s,
                         purchase_quantity = %s,
                         notes = %s,
                         updated_at = CURRENT_DATE,
                         updated_by = %s
-                    WHERE history_id = %s
+                    WHERE purchase_id = %s
                     """,
                     (
                         history.status,
                         history.purchase_quantity,
                         history.notes,
                         0,
-                        history.history_id
+                        history.purchase_id
                     )
                 )
-
-                # 対象商品の在庫を取得してロック
-                inventory = get_inventory_for_update(
+    
+                
+                # 在庫数量を更新
+                add_inventory_quantity(
                     cursor,
-                    history.product_id
-                )
-
-                # 在庫レコードが存在する場合は数量を加算
-                if inventory is not None:
-                    if history.status == "修正":
-                        # 修正前後の仕入数量の差分を計算
-                        quantity_difference = (history.purchase_quantity - history.previous_purchase_quantity)
-                    elif history.status == "キャンセル":
-                        # キャンセル前の仕入数量を在庫から減算
-                        quantity_difference = 0 - history.previous_purchase_quantity
-
-                    # 在庫数量を更新
-                    add_inventory_quantity(
-                        cursor,
-                        history.product_id,
-                        quantity_difference)
-
-                # 履歴更新と在庫更新をまとめて確定
-                conn.commit()
+                    history.product_id,
+                    quantity_difference)
+            else:
+                # 在庫レコードが存在しない場合はエラー
+                raise ValueError("在庫レコードが存在しません。")
+            
+            # 履歴更新と在庫更新をまとめて確定
+            conn.commit()
     

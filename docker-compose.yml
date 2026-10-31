@@ -40,6 +40,10 @@ services:
     ports:
       - "8000:8000"
 
+    # PCとコンテナ間でファイルを共有する設定
+    volumes:
+      - ./backend:/app
+
     # データベースへの接続情報
     environment:
       DB_HOST: db
