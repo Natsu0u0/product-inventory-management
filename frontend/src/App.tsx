@@ -1,122 +1,140 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+
+// CSSファイル読み込み
 import './App.css'
 
+// React Router読み込み
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+
+// 共通コンポーネント読み込み
+import Header from './components/Header'
+import Sidebar from './components/Sidebar'
+
+// トップページ
+import HomePage from './pages/home/HomePage'
+
+// 在庫管理
+import InventoryPage from './pages/inventory/InventoryPage'
+
+// 仕入登録
+import PurchaseCreatePage from './pages/inventory/PurchaseCreatePage'
+import PurchaseCreateConfirmPage from './pages/inventory/PurchaseCreateConfirmPage'
+import PurchaseCreateCompletePage from './pages/inventory/PurchaseCreateCompletePage'
+
+// 販売登録
+import SalesCreatePage from './pages/inventory/SalesCreatePage'
+import SalesCreateConfirmPage from './pages/inventory/SalesCreateConfirmPage'
+import SalesCreateCompletePage from './pages/inventory/SalesCreateCompletePage'
+
+// 商品管理
+import ProductCreatePage from './pages/products/ProductCreatePage'
+import ProductCreateConfirmPage from './pages/products/ProductCreateConfirmPage'
+import ProductCreateCompletePage from './pages/products/ProductCreateCompletePage'
+import ProductEditPage from './pages/products/ProductEditPage'
+import ProductEditConfirmPage from './pages/products/ProductEditConfirmPage'
+import ProductEditCompletePage from './pages/products/ProductEditCompletePage'
+import ProductDeletePage from './pages/products/ProductDeletePage'
+import ProductDeleteConfirmPage from './pages/products/ProductDeleteConfirmPage'
+import ProductDeleteCompletePage from './pages/products/ProductDeleteCompletePage'
+
+// 仕入履歴
+import PurchaseHistoryPage from './pages/purchase-history/PurchaseHistoryPage'
+import PurchaseHistoryEditPage from './pages/purchase-history/PurchaseHistoryEditPage'
+import PurchaseHistoryEditConfirmPage from './pages/purchase-history/PurchaseHistoryEditConfirmPage'
+import PurchaseHistoryEditCompletePage from './pages/purchase-history/PurchaseHistoryEditCompletePage'
+import PurchaseHistoryDeletePage from './pages/purchase-history/PurchaseHistoryDeletePage'
+import PurchaseHistoryDeleteConfirmPage from './pages/purchase-history/PurchaseHistoryDeleteConfirmPage'
+import PurchaseHistoryDeleteCompletePage from './pages/purchase-history/PurchaseHistoryDeleteCompletePage'
+
+// 販売履歴
+import SalesHistoryPage from './pages/sales-history/SalesHistoryPage'
+import SalesHistoryEditPage from './pages/sales-history/SalesHistoryEditPage'
+import SalesHistoryEditConfirmPage from './pages/sales-history/SalesHistoryEditConfirmPage'
+import SalesHistoryEditCompletePage from './pages/sales-history/SalesHistoryEditCompletePage'
+import SalesHistoryDeletePage from './pages/sales-history/SalesHistoryDeletePage'
+import SalesHistoryDeleteConfirmPage from './pages/sales-history/SalesHistoryDeleteConfirmPage'
+import SalesHistoryDeleteCompletePage from './pages/sales-history/SalesHistoryDeleteCompletePage'
+
+// アプリケーション全体のコンポーネント
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <Router>
+      <div className="app">
 
-      <div className="ticks"></div>
+        {/* 共通ヘッダー */}
+        <Header />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* サイドメニューとメインコンテンツの配置 */}
+        <div className="layout">
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+          {/* 共通サイドメニュー */}
+          <Sidebar />
+
+          {/* URLに応じてメインコンテンツを切り替える */}
+          <Routes>
+
+            {/* トップページ */}
+            <Route path="/" element={<HomePage />} />
+
+            {/* 在庫管理 */}
+            <Route path="/inventory" element={<InventoryPage />} />
+
+            {/* 仕入登録 */}
+            <Route path="/purchase/create" element={<PurchaseCreatePage />} />
+            <Route path="/purchase/create/confirm" element={<PurchaseCreateConfirmPage />} />
+            <Route path="/purchase/create/complete" element={<PurchaseCreateCompletePage />} />
+
+            {/* 販売登録 */}
+            <Route path="/sales/create" element={<SalesCreatePage />} />
+            <Route path="/sales/create/confirm" element={<SalesCreateConfirmPage />} />
+            <Route path="/sales/create/complete" element={<SalesCreateCompletePage />} />
+
+            {/* 商品登録 */}
+            <Route path="/products/create" element={<ProductCreatePage />} />
+            <Route path="/products/create/confirm" element={<ProductCreateConfirmPage />} />
+            <Route path="/products/create/complete" element={<ProductCreateCompletePage />} />
+
+            {/* 商品編集 */}
+            <Route path="/products/edit" element={<ProductEditPage />} />
+            <Route path="/products/edit/confirm" element={<ProductEditConfirmPage />} />
+            <Route path="/products/edit/complete" element={<ProductEditCompletePage />} />
+
+            {/* 商品削除 */}
+            <Route path="/products/delete" element={<ProductDeletePage />} />
+            <Route path="/products/delete/confirm" element={<ProductDeleteConfirmPage />} />
+            <Route path="/products/delete/complete" element={<ProductDeleteCompletePage />} />
+
+            {/* 仕入履歴 */}
+            <Route path="/purchase/history" element={<PurchaseHistoryPage />} />
+
+            {/* 仕入履歴編集 */}
+            <Route path="/purchase/history/edit" element={<PurchaseHistoryEditPage />} />
+            <Route path="/purchase/history/edit/confirm" element={<PurchaseHistoryEditConfirmPage />} />
+            <Route path="/purchase/history/edit/complete" element={<PurchaseHistoryEditCompletePage />} />
+
+            {/* 仕入履歴削除・キャンセル */}
+            <Route path="/purchase/history/delete" element={<PurchaseHistoryDeletePage />} />
+            <Route path="/purchase/history/delete/confirm" element={<PurchaseHistoryDeleteConfirmPage />} />
+            <Route path="/purchase/history/delete/complete" element={<PurchaseHistoryDeleteCompletePage />} />
+
+            {/* 販売履歴 */}
+            <Route path="/sales/history" element={<SalesHistoryPage />} />
+
+            {/* 販売履歴編集 */}
+            <Route path="/sales/history/edit" element={<SalesHistoryEditPage />} />
+            <Route path="/sales/history/edit/confirm" element={<SalesHistoryEditConfirmPage />} />
+            <Route path="/sales/history/edit/complete" element={<SalesHistoryEditCompletePage />} />
+
+            {/* 販売履歴削除・キャンセル */}
+            <Route path="/sales/history/delete" element={<SalesHistoryDeletePage />} />
+            <Route path="/sales/history/delete/confirm" element={<SalesHistoryDeleteConfirmPage />} />
+            <Route path="/sales/history/delete/complete" element={<SalesHistoryDeleteCompletePage />} />
+
+          </Routes>
+        </div>
+      </div>
+    </Router>
   )
 }
 
+// 他のファイルからAppを使用できるようにする
 export default App

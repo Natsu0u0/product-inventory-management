@@ -1,184 +1,197 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
 
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+/* アプリ全体の基本設定 */
+.app {
+  min-height: 100vh; /* 画面の高さ以上を確保 */
+  background: #f5f6f8; /* アプリ全体の背景色 */
+  color: #263445; /* アプリ全体の基本文字色 */
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+/* ヘッダー */
+.header {
+  height: 64px; /* ヘッダーの高さ */
+  padding: 0 28px; /* 上下0px、左右28pxの内側余白 */
+  display: flex; /* 子要素を横並びにする */
+  align-items: center; /* 子要素を上下中央に配置 */
+  background: #172b4d; /* ヘッダーの背景色 */
+  color: white; /* ヘッダー内の文字色 */
 }
 
-#center {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+/* ヘッダーのh1（システムタイトルの見出し） */
+.header h1 {
+  margin: 0; /* 初期設定の外側余白をなくす */
+  font-size: 21px; /* 文字サイズ */
+  font-weight: 600; /* 文字の太さ */
+  color: white; /* 見出しの文字色 */
 }
 
-#next-steps {
-  display: flex;
-  border-top: 1px solid var(--border);
-  text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+/* サイドバーとメインコンテンツの配置 */
+.layout {
+  display: flex; /* サイドバーとメインコンテンツを横並びにする */
+  min-height: calc(100vh - 64px); /* 画面の高さからヘッダーの高さ64pxを引いた値を最低限確保 */
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
+/* 左側のサイドバー */
+.sidebar {
+  width: 220px; /* サイドバーの幅 */
+  flex-shrink: 0; /* 横幅が縮まないようにする */
+  padding: 24px 16px; /* 上下24px、左右16pxの内側余白 */
+  background: #fff; /* サイドバーの背景色 */
+  border-right: 1px solid #e2e6eb; /* 右側に境界線を表示 */
 }
 
-#next-steps ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
-
-  .logo {
-    height: 18px;
-  }
-
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
-    display: flex;
-    padding: 6px 12px;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    margin-top: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-  }
+/* サイドバーのメニュー見出し */
+.menu-title {
+  margin: 0 0 16px; /* 上下0px、下側16pxの外側余白 */
+  color: #7a8796; /* 文字色 */
+  font-size: 13px; /* 文字サイズ */
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
+/* サイドバー内のメニュー配置 */
+.sidebar nav {
+  display: flex; /* Flexboxを使用 */
+  flex-direction: column; /* メニューを縦並びにする */
+  gap: 6px; /* メニュー同士の間隔 */
 }
 
-.ticks {
-  position: relative;
-  width: 100%;
+/* サイドバー内の各メニューリンク */
+.sidebar nav a {
+  padding: 12px; /* メニュー内側の余白 */
+  border-radius: 6px; /* メニューの角を丸くする */
+  color: #45546a; /* メニューの文字色 */
+  font-size: 14px; /* 文字サイズ */
+}
 
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
+/* サイドバー内の選択中メニュー */
+.sidebar nav a.active {
+  background: #e5edf8; /* 選択中メニューの背景色 */
+  color: #244a78; /* 選択中メニューの文字色 */
+  font-weight: 600; /* 選択中メニューの文字を太くする */
+}
+
+/* 右側のメインコンテンツ */
+.main {
+  flex: 1; /* サイドバー以外の残りの横幅を使用する */
+  min-width: 0; /* 内容によって横幅が不必要に広がるのを防ぐ */
+  padding: 32px; /* メインコンテンツの内側余白 */
+}
+
+/* メインコンテンツのページ見出し */
+.page-heading {
+  margin-bottom: 24px; /* 下側の余白 */
+}
+
+/* メインコンテンツのh2（ページタイトルの見出し） */
+.page-heading h2 {
+  margin: 0 0 8px; /* 上下0px、下側8pxの外側余白 */
+  font-size: 24px; /* 文字サイズ */
+  color: #263445; /* 見出しの文字色 */
+}
+
+/* メインコンテンツのp（ページの説明文） */
+.page-heading p {
+  color: #788494; /* 説明文の文字色 */
+  font-size: 14px; /* 文字サイズ */
+}
+
+/* メインコンテンツの商品登録フォーム全体 */
+.register-form {
+  max-width: 760px; /* フォームの最大幅 */
+  padding: 28px; /* フォーム内部の余白 */
+  background: white; /* フォームの背景色 */
+  border: 1px solid #e2e6eb; /* フォームの境界線 */
+  border-radius: 8px; /* フォームの角を丸くする */
+}
+
+/* 商品登録フォーム内の入力項目ごとのグループ */
+.form-group {
+  display: flex; /* Flexboxを使用 */
+  flex-direction: column; /* 項目名と入力欄を縦並びにする */
+  gap: 8px; /* 項目名と入力欄の間隔 */
+  margin-bottom: 22px; /* 各入力項目の下側余白 */
+}
+
+/* 商品登録フォーム内のlabel（入力項目の名称） */
+.form-group label {
+  font-size: 14px; /* 文字サイズ */
+  font-weight: 600; /* 文字の太さ */
+}
+
+/* 商品登録フォーム内のinput・select・textarea（入力欄・選択欄・備考欄） */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%; /* 親要素の幅いっぱいにする */
+  box-sizing: border-box; /* 内側余白と枠線を含めて幅を計算する */
+  padding: 11px 12px; /* 入力欄の内側余白 */
+  border: 1px solid #ccd3dc; /* 入力欄の境界線 */
+  border-radius: 5px; /* 入力欄の角を丸くする */
+  background: white; /* 入力欄の背景色 */
+  color: #263445; /* 入力文字の色 */
+  font: inherit; /* 親要素のフォント設定を引き継ぐ */
+  font-size: 14px; /* 文字サイズ */
+}
+
+/* 商品登録フォーム内のtextarea（備考欄） */
+.form-group textarea {
+  resize: vertical; /* 高さ方向のみサイズ変更できるようにする */
+}
+
+/* 商品登録フォーム内のボタン配置 */
+.form-actions {
+  display: flex; /* ボタンを横並びにする */
+  justify-content: flex-end; /* ボタンを右寄せにする */
+  gap: 12px; /* ボタン同士の間隔 */
+  margin-top: 28px; /* ボタン上側の余白 */
+}
+
+/* 商品登録フォーム内のボタン共通設定 */
+.form-actions button {
+  padding: 11px 24px; /* ボタンの内側余白 */
+  border: none; /* ボタンの境界線をなくす */
+  border-radius: 5px; /* ボタンの角を丸くする */
+  font-size: 14px; /* 文字サイズ */
+  cursor: pointer; /* マウスカーソルをポインターに変更 */
+}
+
+/* 商品登録フォームのクリアボタン */
+.reset-button {
+  background: #edf0f3; /* ボタンの背景色 */
+  color: #45546a; /* ボタンの文字色 */
+}
+
+/* 商品登録フォームの登録ボタン */
+.submit-button {
+  background: #244a78; /* ボタンの背景色 */
+  color: white; /* ボタンの文字色 */
+}
+
+/* 画面幅が700px以下の場合の設定（スマートフォン向け） */
+@media (max-width: 700px) {
+
+  /* サイドバーとメインコンテンツの配置 */
+  .layout {
+    flex-direction: column; /* サイドバーとメインコンテンツを縦並びに変更 */
   }
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
+  /* 左側のサイドバー */
+  .sidebar {
+    width: auto; /* 親要素に合わせて幅を自動調整 */
+    padding: 12px; /* サイドバーの内側余白 */
   }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
+
+  /* サイドバー内のメニュー配置 */
+  .sidebar nav {
+    flex-direction: row; /* メニューを横並びに変更 */
+    flex-wrap: wrap; /* 横幅に収まらない場合は折り返す */
+  }
+
+  /* 右側のメインコンテンツ */
+  .main {
+    padding: 20px 14px; /* 上下20px、左右14pxの内側余白 */
+  }
+
+  /* メインコンテンツの商品登録フォーム全体 */
+  .register-form {
+    padding: 18px; /* フォーム内部の余白を調整 */
   }
 }
