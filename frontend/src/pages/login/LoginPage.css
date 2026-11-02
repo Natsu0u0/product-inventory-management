@@ -1,0 +1,99 @@
+/* ログイン画面全体 */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: calc(100vh - 131px);
+  padding: 24px;
+  box-sizing: border-box;
+  background-color: #f5f6f8;
+}
+
+/* ログインフォーム全体のスタイル */
+.login-form {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border: 1px solid #e2e6eb;
+  border-radius: 12px;
+  /* カードに薄い影を付けて立体感を出す */
+  box-shadow: 0 8px 24px rgba(23, 43, 77, 0.08);
+}
+
+/* ログインフォームの見出し部分 */
+.login-heading {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+/* ログイン画面のタイトル */
+.login-heading h2 {
+  margin: 0 0 10px;
+  color: #172b4d;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+/* ログイン画面の説明文 */
+.login-heading p {
+  margin: 0;
+  color: #788494;
+  font-size: 14px;
+}
+
+/* 入力欄とボタンをまとめるグループ */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+/* 入力項目のラベル */
+.form-group label {
+  color: #263445;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ユーザーID・パスワードの入力欄 */
+.form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  border: 1px solid #ccd3dc;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #263445;
+  font-size: 15px;
+}
+
+/* 入力欄を選択したときのスタイル */
+.form-group input:focus {
+  outline: none;
+  border-color: #244a78;
+  box-shadow: 0 0 0 3px rgba(36, 74, 120, 0.12);
+}
+
+/* ログインボタン */
+.form-group button {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 6px;
+  background-color: #244a78;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  /* 背景色の変化を滑らかにする */
+  transition: background-color 0.2s ease;
+}
+
+/* ログインボタンにマウスを乗せたときのスタイル */
+.form-group button:hover {
+  background-color: #172b4d;
+}

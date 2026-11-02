@@ -3,11 +3,15 @@
 import './App.css'
 
 // React Router読み込み
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import {
+  BrowserRouter as Router, Route, Routes, useLocation} from 'react-router-dom'
 
 // 共通コンポーネント読み込み
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
+
+//ログインページ
+import LoginPage from './pages/login/LoginPage'
 
 // トップページ
 import HomePage from './pages/home/HomePage'
@@ -54,26 +58,36 @@ import SalesHistoryDeletePage from './pages/sales-history/SalesHistoryDeletePage
 import SalesHistoryDeleteConfirmPage from './pages/sales-history/SalesHistoryDeleteConfirmPage'
 import SalesHistoryDeleteCompletePage from './pages/sales-history/SalesHistoryDeleteCompletePage'
 
-// アプリケーション全体のコンポーネント
-function App() {
+
+// アプリケーションの画面構成を定義する
+function AppContent() {
+  // 現在のURL情報を取得する
+  const location = useLocation()
+
+  // ログイン画面かどうかを判定する
+  const isLoginPage = location.pathname === '/login'
+
   return (
-    <Router>
-      <div className="app">
+    <div className={isLoginPage ? 'login-layout' : 'app'}>
 
-        {/* 共通ヘッダー */}
-        <Header />
+      {/* ログイン画面以外ではヘッダーを表示 */}
+      {!isLoginPage && <Header />}
 
-        {/* サイドメニューとメインコンテンツの配置 */}
-        <div className="layout">
+      {/* サイドメニューとメインコンテンツ */}
+      <div className={isLoginPage ? 'login-content' : 'layout'}>
 
-          {/* 共通サイドメニュー */}
-          <Sidebar />
+        {/* ログイン画面以外ではサイドバーを表示 */}
+        {!isLoginPage && <Sidebar />}
 
           {/* URLに応じてメインコンテンツを切り替える */}
           <Routes>
 
+            {/* ログインページ */}
+            <Route path="/login" element={<LoginPage />} />
+
             {/* トップページ */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/Home" element={<HomePage />} />
 
             {/* 在庫管理 */}
             <Route path="/inventory" element={<InventoryPage />} />
@@ -128,10 +142,19 @@ function App() {
             <Route path="/sales/history/delete" element={<SalesHistoryDeletePage />} />
             <Route path="/sales/history/delete/confirm" element={<SalesHistoryDeleteConfirmPage />} />
             <Route path="/sales/history/delete/complete" element={<SalesHistoryDeleteCompletePage />} />
+        </Routes>
 
-          </Routes>
-        </div>
       </div>
+    </div>
+  )
+}
+
+
+// アプリケーション全体のコンポーネント
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   )
 }

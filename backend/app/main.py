@@ -12,12 +12,17 @@ from contextlib import closing
 # 商品APIのRouterをインポート
 from app.routers.products import router as products_router
 
+# ユーザAPIのRouterをインポート
+from app.routers.users import router as users_router
+
 
 # FastAPIのアプリケーションを作成
 app = FastAPI()
 
 # 商品APIを登録
 app.include_router(products_router)
+# ユーザAPIを登録
+app.include_router(users_router)
 
 
 # ルートURLへのGETリクエスト

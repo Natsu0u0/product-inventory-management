@@ -6,3 +6,6 @@ uvicorn[standard]
 
 #PythonからPostgreSQLに接続
 psycopg[binary]
+
+# パスワードのハッシュ化・照合
+pwdlib[argon2]
