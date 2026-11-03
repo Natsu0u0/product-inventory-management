@@ -33,15 +33,17 @@ function LoginPage({ onLogin }: { onLogin: () => void }) {
     const data = await response.json()
 
       if (data.user?.message === 'ログイン成功') {
-        // ログイン成功時,ログイン状態保存し、Homeページに遷移
+        // ログイン状態とユーザーIDを保存
         sessionStorage.setItem('isLoggedIn', 'true')
+        sessionStorage.setItem('user_id', userId)
+
         // 親コンポーネントにログイン成功を通知
         onLogin()
         navigate('/Home')
       } else {
-      console.log('ログイン失敗')
+        console.log('ログイン失敗')
       }
-          }
+  }
 
   return (
     <main className="login-page">

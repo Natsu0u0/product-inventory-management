@@ -59,7 +59,7 @@ def get_sales_history(cursor, sales_id):
 # ==================
 
 # 販売履歴を登録する
-def create_sales_history(history):
+def create_sales_history(history, user_id):
     # DBに接続
     with closing(get_connection()) as conn:
         # SQLを操作するカーソルを作成
@@ -117,7 +117,7 @@ def create_sales_history(history):
                     history.notes,
                     customer_name,
                     category,
-                    0
+                    user_id
                 )
             )
 
@@ -125,7 +125,8 @@ def create_sales_history(history):
             add_inventory_quantity(
                 cursor,
                 history.product_id,
-                -history.sales_quantity
+                -history.sales_quantity,
+                user_id
             )
 
             # 履歴登録と在庫更新をまとめて確定
@@ -137,7 +138,7 @@ def create_sales_history(history):
 # ==================
 
 # 販売履歴を更新する
-def update_sales_history(history):
+def update_sales_history(history, user_id):
     # DBに接続
     with closing(get_connection()) as conn:
         # SQLを操作するカーソルを作成
@@ -219,7 +220,7 @@ def update_sales_history(history):
                     history.status,
                     updated_sales_quantity,
                     history.notes,
-                    0,
+                    user_id,
                     history.sales_id
                 )
             )
@@ -228,8 +229,47 @@ def update_sales_history(history):
             add_inventory_quantity(
                 cursor,
                 product_id,
-                quantity_difference
+                quantity_difference,
+                user_id
             )
 
             # 履歴更新と在庫更新をまとめて確定
             conn.commit()
+
+
+# ==================
+# 販売履歴一覧を取得
+# ==================
+
+# 販売履歴一覧を取得する
+def get_sales_histories():
+    # DBに接続
+    with closing(get_connection()) as conn:
+        # SQLを操作するカーソルを作成
+        with closing(conn.cursor()) as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    sh.sales_id,
+                    sh.customer_id,
+                    sh.product_id,
+                    p.product_name,
+                    sh.category,
+                    sh.status,
+                    sh.sales_quantity,
+                    sh.notes,
+                    sh.created_at,
+                    sh.customer_name
+                FROM sales_history AS sh
+                INNER JOIN products AS p
+                    ON sh.product_id = p.product_id
+                ORDER BY sh.sales_id DESC
+                LIMIT 30
+                """
+            )
+
+            # 取得した全レコードを受け取る
+            sales_histories = cursor.fetchall()
+
+            # 販売履歴一覧を返す
+            return sales_histories

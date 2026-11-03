@@ -3,7 +3,7 @@
 import './App.css'
 
 // React Router読み込み
-import {BrowserRouter as Router, Route, Routes, useLocation,useNavigate} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 // ReactのuseStateフックを読み込み
 import { useState } from 'react'
@@ -13,7 +13,7 @@ import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import RequireAuth from './components/RequireAuth'
 
-//ログインページ
+// ログインページ
 import LoginPage from './pages/login/LoginPage'
 
 // トップページ
@@ -22,20 +22,12 @@ import HomePage from './pages/home/HomePage'
 // 在庫管理
 import InventoryPage from './pages/inventory/InventoryPage'
 
-// 仕入登録
-import PurchaseCreatePage from './pages/inventory/PurchaseCreatePage'
-import PurchaseCreateConfirmPage from './pages/inventory/PurchaseCreateConfirmPage'
-import PurchaseCreateCompletePage from './pages/inventory/PurchaseCreateCompletePage'
-
-// 販売登録
-import SalesCreatePage from './pages/inventory/SalesCreatePage'
-import SalesCreateConfirmPage from './pages/inventory/SalesCreateConfirmPage'
-import SalesCreateCompletePage from './pages/inventory/SalesCreateCompletePage'
+// 各種登録
+import RegistrationPage from './pages/registration/RegistrationPage'
+import RegistrationConfirmPage from './pages/registration/RegistrationConfirmPage'
+import RegistrationCompletePage from './pages/registration/RegistrationCompletePage'
 
 // 商品管理
-import ProductCreatePage from './pages/products/ProductCreatePage'
-import ProductCreateConfirmPage from './pages/products/ProductCreateConfirmPage'
-import ProductCreateCompletePage from './pages/products/ProductCreateCompletePage'
 import ProductEditPage from './pages/products/ProductEditPage'
 import ProductEditConfirmPage from './pages/products/ProductEditConfirmPage'
 import ProductEditCompletePage from './pages/products/ProductEditCompletePage'
@@ -72,9 +64,11 @@ function AppContent() {
 
   // ログアウト処理
   const navigate = useNavigate()
-  // ログアウト処理
+
   const handleLogout = () => {
     sessionStorage.removeItem('isLoggedIn')
+    sessionStorage.removeItem('user_id')
+
     // ログイン状態をfalseに設定
     setIsLoggedIn(false)
     navigate('/')
@@ -105,176 +99,148 @@ function AppContent() {
         {/* ログイン画面以外ではサイドバーを表示 */}
         {!isLoginPage && <Sidebar />}
 
-          {/* URLに応じてメインコンテンツを切り替える */}
-          <Routes>
+        {/* URLに応じてメインコンテンツを切り替える */}
+        <Routes>
 
-            {/* ログインページ：ログイン前でもアクセス可能 */}
-            <Route
-              path="/login"
-              element={<LoginPage onLogin={() => setIsLoggedIn(true)} />}
-            />
+          {/* ログインページ：ログイン前でもアクセス可能 */}
+          <Route
+            path="/login"
+            element={<LoginPage onLogin={() => setIsLoggedIn(true)} />}
+          />
 
-            {/* ログイン前のトップページ：ログイン前でもアクセス可能 */}
+          {/* ログイン前のトップページ：ログイン前でもアクセス可能 */}
+          <Route
+            path="/"
+            element={<HomePage isLoggedIn={isLoggedIn} />}
+          />
+
+          {/* ログイン必須の画面 */}
+          <Route element={<RequireAuth isLoggedIn={isLoggedIn} />}>
+
+            {/* ログイン後のトップページ */}
             <Route
-              path="/"
+              path="/Home"
               element={<HomePage isLoggedIn={isLoggedIn} />}
             />
 
-            {/* ログイン必須の画面 */}
-            <Route element={<RequireAuth isLoggedIn={isLoggedIn} />}>
+            {/* 在庫管理 */}
+            <Route
+              path="/inventory"
+              element={<InventoryPage />}
+            />
 
-              {/* ログイン後のトップページ */}
-              <Route
-                path="/Home"
-                element={<HomePage isLoggedIn={isLoggedIn} />}
-              />
+            {/* 各種登録 */}
+            <Route
+              path="/registration"
+              element={<RegistrationPage />}
+            />
+            <Route
+              path="/registration/confirm"
+              element={<RegistrationConfirmPage />}
+            />
+            <Route
+              path="/registration/complete"
+              element={<RegistrationCompletePage />}
+            />
 
-              {/* 在庫管理 */}
-              <Route
-                path="/inventory"
-                element={<InventoryPage />}
-              />
+            {/* 商品編集 */}
+            <Route
+              path="/products/edit"
+              element={<ProductEditPage />}
+            />
+            <Route
+              path="/products/edit/confirm"
+              element={<ProductEditConfirmPage />}
+            />
+            <Route
+              path="/products/edit/complete"
+              element={<ProductEditCompletePage />}
+            />
 
-              {/* 仕入登録 */}
-              <Route
-                path="/purchase/create"
-                element={<PurchaseCreatePage />}
-              />
-              <Route
-                path="/purchase/create/confirm"
-                element={<PurchaseCreateConfirmPage />}
-              />
-              <Route
-                path="/purchase/create/complete"
-                element={<PurchaseCreateCompletePage />}
-              />
+            {/* 商品削除 */}
+            <Route
+              path="/products/delete"
+              element={<ProductDeletePage />}
+            />
+            <Route
+              path="/products/delete/confirm"
+              element={<ProductDeleteConfirmPage />}
+            />
+            <Route
+              path="/products/delete/complete"
+              element={<ProductDeleteCompletePage />}
+            />
 
-              {/* 販売登録 */}
-              <Route
-                path="/sales/create"
-                element={<SalesCreatePage />}
-              />
-              <Route
-                path="/sales/create/confirm"
-                element={<SalesCreateConfirmPage />}
-              />
-              <Route
-                path="/sales/create/complete"
-                element={<SalesCreateCompletePage />}
-              />
+            {/* 仕入履歴 */}
+            <Route
+              path="/purchase/history"
+              element={<PurchaseHistoryPage />}
+            />
 
-              {/* 商品登録 */}
-              <Route
-                path="/products/create"
-                element={<ProductCreatePage />}
-              />
-              <Route
-                path="/products/create/confirm"
-                element={<ProductCreateConfirmPage />}
-              />
-              <Route
-                path="/products/create/complete"
-                element={<ProductCreateCompletePage />}
-              />
+            {/* 仕入履歴編集 */}
+            <Route
+              path="/purchase/history/edit"
+              element={<PurchaseHistoryEditPage />}
+            />
+            <Route
+              path="/purchase/history/edit/confirm"
+              element={<PurchaseHistoryEditConfirmPage />}
+            />
+            <Route
+              path="/purchase/history/edit/complete"
+              element={<PurchaseHistoryEditCompletePage />}
+            />
 
-              {/* 商品編集 */}
-              <Route
-                path="/products/edit"
-                element={<ProductEditPage />}
-              />
-              <Route
-                path="/products/edit/confirm"
-                element={<ProductEditConfirmPage />}
-              />
-              <Route
-                path="/products/edit/complete"
-                element={<ProductEditCompletePage />}
-              />
+            {/* 仕入履歴削除・キャンセル */}
+            <Route
+              path="/purchase/history/delete"
+              element={<PurchaseHistoryDeletePage />}
+            />
+            <Route
+              path="/purchase/history/delete/confirm"
+              element={<PurchaseHistoryDeleteConfirmPage />}
+            />
+            <Route
+              path="/purchase/history/delete/complete"
+              element={<PurchaseHistoryDeleteCompletePage />}
+            />
 
-              {/* 商品削除 */}
-              <Route
-                path="/products/delete"
-                element={<ProductDeletePage />}
-              />
-              <Route
-                path="/products/delete/confirm"
-                element={<ProductDeleteConfirmPage />}
-              />
-              <Route
-                path="/products/delete/complete"
-                element={<ProductDeleteCompletePage />}
-              />
+            {/* 販売履歴 */}
+            <Route
+              path="/sales/history"
+              element={<SalesHistoryPage />}
+            />
 
-              {/* 仕入履歴 */}
-              <Route
-                path="/purchase/history"
-                element={<PurchaseHistoryPage />}
-              />
+            {/* 販売履歴編集 */}
+            <Route
+              path="/sales/history/edit"
+              element={<SalesHistoryEditPage />}
+            />
+            <Route
+              path="/sales/history/edit/confirm"
+              element={<SalesHistoryEditConfirmPage />}
+            />
+            <Route
+              path="/sales/history/edit/complete"
+              element={<SalesHistoryEditCompletePage />}
+            />
 
-              {/* 仕入履歴編集 */}
-              <Route
-                path="/purchase/history/edit"
-                element={<PurchaseHistoryEditPage />}
-              />
-              <Route
-                path="/purchase/history/edit/confirm"
-                element={<PurchaseHistoryEditConfirmPage />}
-              />
-              <Route
-                path="/purchase/history/edit/complete"
-                element={<PurchaseHistoryEditCompletePage />}
-              />
+            {/* 販売履歴削除・キャンセル */}
+            <Route
+              path="/sales/history/delete"
+              element={<SalesHistoryDeletePage />}
+            />
+            <Route
+              path="/sales/history/delete/confirm"
+              element={<SalesHistoryDeleteConfirmPage />}
+            />
+            <Route
+              path="/sales/history/delete/complete"
+              element={<SalesHistoryDeleteCompletePage />}
+            />
 
-              {/* 仕入履歴削除・キャンセル */}
-              <Route
-                path="/purchase/history/delete"
-                element={<PurchaseHistoryDeletePage />}
-              />
-              <Route
-                path="/purchase/history/delete/confirm"
-                element={<PurchaseHistoryDeleteConfirmPage />}
-              />
-              <Route
-                path="/purchase/history/delete/complete"
-                element={<PurchaseHistoryDeleteCompletePage />}
-              />
-
-              {/* 販売履歴 */}
-              <Route
-                path="/sales/history"
-                element={<SalesHistoryPage />}
-              />
-
-              {/* 販売履歴編集 */}
-              <Route
-                path="/sales/history/edit"
-                element={<SalesHistoryEditPage />}
-              />
-              <Route
-                path="/sales/history/edit/confirm"
-                element={<SalesHistoryEditConfirmPage />}
-              />
-              <Route
-                path="/sales/history/edit/complete"
-                element={<SalesHistoryEditCompletePage />}
-              />
-
-              {/* 販売履歴削除・キャンセル */}
-              <Route
-                path="/sales/history/delete"
-                element={<SalesHistoryDeletePage />}
-              />
-              <Route
-                path="/sales/history/delete/confirm"
-                element={<SalesHistoryDeleteConfirmPage />}
-              />
-              <Route
-                path="/sales/history/delete/complete"
-                element={<SalesHistoryDeleteCompletePage />}
-              />
-
-            </Route>
-          </Routes>
+          </Route>
+        </Routes>
 
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 # ==================
 # 在庫情報のデータベースアクセス・SQL実行
 # ==================
@@ -36,7 +37,7 @@ def get_inventory_for_update(cursor, product_id):
 # ==================
 
 # 在庫レコードを新規登録する
-def create_inventory(cursor, product_id, quantity):
+def create_inventory(cursor, product_id, quantity, user_id):
     cursor.execute(
         """
         INSERT INTO inventories (
@@ -50,7 +51,7 @@ def create_inventory(cursor, product_id, quantity):
         (
             product_id,
             quantity,
-            0
+            user_id
         )
     )
 
@@ -60,12 +61,12 @@ def create_inventory(cursor, product_id, quantity):
 # ==================
 
 # 在庫数量を加算する
-def add_inventory_quantity(cursor, product_id, quantity):
-    
+def add_inventory_quantity(cursor, product_id, quantity, user_id):
+
     cursor.execute(
         """
         UPDATE inventories
-        ###在庫数量を計算する(渡された quantity がプラスでもマイナスでも対応できる)
+        -- 在庫数量を計算する(渡された quantity がプラスでもマイナスでも対応できる)
         SET stock_quantity = stock_quantity + %s,
             updated_at = CURRENT_DATE,
             updated_by = %s
@@ -73,7 +74,59 @@ def add_inventory_quantity(cursor, product_id, quantity):
         """,
         (
             quantity,
-            0,
+            user_id,
             product_id
         )
     )
+
+
+# ==================
+# 在庫一覧取得
+# ==================
+
+# 在庫一覧を取得する
+def get_inventories():
+    # DBに接続
+    with closing(get_connection()) as conn:
+        # SQLを操作するカーソルを作成
+        with closing(conn.cursor()) as cursor:
+            # 在庫一覧を取得
+            cursor.execute(
+                """
+                SELECT
+                    inventories.inventory_id,
+                    inventories.product_id,
+                    products.category,
+                    products.product_name,
+                    inventories.stock_quantity,
+                    inventories.notes
+                FROM inventories
+                INNER JOIN products
+                    ON inventories.product_id = products.product_id
+                ORDER BY inventories.inventory_id
+                """
+            )
+
+            # 取得した全行を受け取る
+            rows = cursor.fetchall()
+
+            # 在庫一覧を格納するリスト
+            inventories = []
+
+            # 取得した行ごとに処理
+            for row in rows:
+                # 辞書型に変換
+                inventory = {
+                    "inventory_id": row[0],
+                    "product_id": row[1],
+                    "category": row[2],
+                    "product_name": row[3],
+                    "stock_quantity": row[4],
+                    "notes": row[5]
+                }
+
+                # リストに追加
+                inventories.append(inventory)
+
+            # 在庫一覧を返す
+            return inventories

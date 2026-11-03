@@ -94,7 +94,7 @@
   font-size: 14px; /* 文字サイズ */
 }
 
-/* メインコンテンツの商品登録フォーム全体 */
+/* メインコンテンツの各種登録フォーム全体 */
 .register-form {
   max-width: 760px; /* フォームの最大幅 */
   padding: 28px; /* フォーム内部の余白 */
@@ -103,7 +103,7 @@
   border-radius: 8px; /* フォームの角を丸くする */
 }
 
-/* 商品登録フォーム内の入力項目ごとのグループ */
+/* 各種登録フォーム内の入力項目ごとのグループ */
 .form-group {
   display: flex; /* Flexboxを使用 */
   flex-direction: column; /* 項目名と入力欄を縦並びにする */
@@ -111,13 +111,13 @@
   margin-bottom: 22px; /* 各入力項目の下側余白 */
 }
 
-/* 商品登録フォーム内のlabel（入力項目の名称） */
+/* 各種登録フォーム内のlabel（入力項目の名称） */
 .form-group label {
   font-size: 14px; /* 文字サイズ */
   font-weight: 600; /* 文字の太さ */
 }
 
-/* 商品登録フォーム内のinput・select・textarea（入力欄・選択欄・備考欄） */
+/* 各種登録フォーム内のinput・select・textarea（入力欄・選択欄・備考欄） */
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -132,12 +132,12 @@
   font-size: 14px; /* 文字サイズ */
 }
 
-/* 商品登録フォーム内のtextarea（備考欄） */
+/* 各種登録フォーム内のtextarea（備考欄） */
 .form-group textarea {
   resize: vertical; /* 高さ方向のみサイズ変更できるようにする */
 }
 
-/* 商品登録フォーム内のボタン配置 */
+/* 各種登録フォーム内のボタン配置 */
 .form-actions {
   display: flex; /* ボタンを横並びにする */
   justify-content: flex-end; /* ボタンを右寄せにする */
@@ -145,7 +145,7 @@
   margin-top: 28px; /* ボタン上側の余白 */
 }
 
-/* 商品登録フォーム内のボタン共通設定 */
+/* 各種登録フォーム内のボタン共通設定 */
 .form-actions button {
   padding: 11px 24px; /* ボタンの内側余白 */
   border: none; /* ボタンの境界線をなくす */
@@ -154,13 +154,13 @@
   cursor: pointer; /* マウスカーソルをポインターに変更 */
 }
 
-/* 商品登録フォームのクリアボタン */
+/* 各種登録フォームのクリアボタン */
 .reset-button {
   background: #edf0f3; /* ボタンの背景色 */
   color: #45546a; /* ボタンの文字色 */
 }
 
-/* 商品登録フォームの登録ボタン */
+/* 各種登録フォームの登録ボタン */
 .submit-button {
   background: #244a78; /* ボタンの背景色 */
   color: white; /* ボタンの文字色 */
@@ -191,7 +191,7 @@
     padding: 20px 14px; /* 上下20px、左右14pxの内側余白 */
   }
 
-  /* メインコンテンツの商品登録フォーム全体 */
+  /* メインコンテンツの各種登録フォーム全体 */
   .register-form {
     padding: 18px; /* フォーム内部の余白を調整 */
   }

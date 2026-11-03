@@ -7,7 +7,7 @@ function Sidebar() {
       <p className="menu-title">メニュー</p>
 
       <nav>
-        <NavLink to="/products/create">商品登録</NavLink>
+        <NavLink to="/registration">各種登録</NavLink>
         <NavLink to="/inventory">在庫管理</NavLink>
         <NavLink to="/purchase/history">仕入履歴</NavLink>
         <NavLink to="/sales/history">販売履歴</NavLink>
