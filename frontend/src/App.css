@@ -12,6 +12,7 @@
   padding: 0 28px; /* 上下0px、左右28pxの内側余白 */
   display: flex; /* 子要素を横並びにする */
   align-items: center; /* 子要素を上下中央に配置 */
+  justify-content: space-between; /* タイトルとボタンを左右に配置 */
   background: #172b4d; /* ヘッダーの背景色 */
   color: white; /* ヘッダー内の文字色 */
 }

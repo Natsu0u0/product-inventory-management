@@ -7,8 +7,9 @@ import { useState } from 'react'
 // React RouterのuseNavigateフックをインポート
 import { useNavigate } from 'react-router-dom'
 
+
 // ログインページのコンポーネントを定義する
-function LoginPage() {
+function LoginPage({ onLogin }: { onLogin: () => void }) {
   // 画面遷移を行うための関数を取得
   const navigate = useNavigate()
 
@@ -28,10 +29,20 @@ function LoginPage() {
     }),
   })
 
-  const data = await response.json()
+    // レスポンスのJSONデータを取得
+    const data = await response.json()
 
-  console.log(data)
-}
+      if (data.user?.message === 'ログイン成功') {
+        // ログイン成功時,ログイン状態保存し、Homeページに遷移
+        sessionStorage.setItem('isLoggedIn', 'true')
+        // 親コンポーネントにログイン成功を通知
+        onLogin()
+        navigate('/Home')
+      } else {
+      console.log('ログイン失敗')
+      }
+          }
+
   return (
     <main className="login-page">
         
