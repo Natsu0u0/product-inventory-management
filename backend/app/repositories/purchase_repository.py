@@ -29,27 +29,19 @@ from app.repositories.inventory_repository import (
 
 # 仕入履歴レコードの存在確認
 def get_purchase_history(cursor, purchase_id):
-    # DBに接続
-    # 仕入履歴レコードの存在確認
-    cursor.execute(
-        """
+    cursor.execute("""
         SELECT status, purchase_quantity
         FROM purchase_history
         WHERE purchase_id = %s
-        """,
-        (purchase_id,)
-    )
+        FOR UPDATE
+    """, (purchase_id,))
 
-    # 取得した結果1行を受け取る
-    purchase_history_data = cursor.fetchone()
+    history = cursor.fetchone()
 
-    # purchase_history_dataがNoneの場合はNoneを返す
-    if purchase_history_data is None:
+    if history is None:
         return None, None
 
-    # purchase_history_dataがNoneでない場合はstatusとpurchase_quantityを返す
-    else:
-        return purchase_history_data[0], purchase_history_data[1]
+    return history
 
 
 # ==================
@@ -155,92 +147,90 @@ def create_purchase_history(history, user_id):
 
 
 # ==================
-# ステータス修正orキャンセル：仕入履歴更新・在庫更新
+# ステータス修正：仕入履歴更新・在庫更新
 # ==================
 
-# 仕入履歴を更新する
 def update_purchase_history(history, user_id):
-    # DBに接続
     with closing(get_connection()) as conn:
-        # SQLを操作するカーソルを作成
         with closing(conn.cursor()) as cursor:
-            # DBから仕入履歴を取得
+            # 編集対象の履歴を取得
             previous_status, previous_purchase_quantity = get_purchase_history(
                 cursor,
                 history.purchase_id
             )
 
-            # DBに登録されているステータスが存在しない場合はエラー
             if previous_status is None:
-                raise ValueError("指定された仕入履歴IDは存在しません。")
+                raise ValueError("指定された仕入履歴番号は存在しません。")
 
-            else:
-                if previous_status == "キャンセル" and history.status == previous_status:
-                    # 仕入履歴がキャンセル済みの場合はエラーを返す
-                    raise ValueError("指定された仕入履歴IDはキャンセル済みです。")
+            # キャンセル履歴は編集できない
+            if previous_status == "キャンセル":
+                raise ValueError("キャンセル履歴は修正できません。")
 
-                # 対象商品の在庫を取得してロック
-                inventory_data = get_inventory_for_update(
-                    cursor,
-                    history.product_id
+            # 既にキャンセルされている元履歴か確認
+            cancellation_note = (
+                f"キャンセル元仕入履歴番号：{history.purchase_id}"
+            )
+
+            cursor.execute("""
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM purchase_history
+                    WHERE notes = %s
                 )
+            """, (cancellation_note,))
 
-            # 在庫レコードが存在する場合は数量を加算
-            if inventory_data is not None:
-                stock_quantity = inventory_data[1]
+            if cursor.fetchone()[0]:
+                raise ValueError("キャンセル済みの履歴は修正できません。")
 
-                if history.status == "修正":
-                    # 修正前後の仕入数量の差分を計算
-                    quantity_difference = (
-                        history.purchase_quantity - previous_purchase_quantity
-                    )
+            if history.purchase_quantity <= 0:
+                raise ValueError("仕入数量は1以上を指定してください。")
 
-                    # 修正後の仕入数量が0の場合はエラー
-                    if history.purchase_quantity <= 0:
-                        raise ValueError("入力値エラー。")
+            # 在庫を取得してロック
+            inventory = get_inventory_for_update(
+                cursor,
+                history.product_id
+            )
 
-                elif history.status == "キャンセル":
-                    # キャンセル前の仕入数量を在庫から減算
-                    quantity_difference = 0 - previous_purchase_quantity
-
-                updated_stock_quantity = stock_quantity + quantity_difference
-
-                if updated_stock_quantity < 0:
-                    # 在庫数量がマイナスになる場合はエラー
-                    raise ValueError("在庫数量がマイナスになります。")
-
-                # 仕入履歴を更新
-                cursor.execute(
-                    """
-                    UPDATE purchase_history
-                    SET status = %s,
-                        purchase_quantity = %s,
-                        notes = %s,
-                        updated_at = CURRENT_DATE,
-                        updated_by = %s
-                    WHERE purchase_id = %s
-                    """,
-                    (
-                        history.status,
-                        history.purchase_quantity,
-                        history.notes,
-                        user_id,
-                        history.purchase_id
-                    )
-                )
-
-                # 在庫数量を更新
-                add_inventory_quantity(
-                    cursor,
-                    history.product_id,
-                    quantity_difference,
-                    user_id
-                )
-            else:
-                # 在庫レコードが存在しない場合はエラー
+            if inventory is None:
                 raise ValueError("在庫レコードが存在しません。")
 
-            # 履歴更新と在庫更新をまとめて確定
+            stock_quantity = inventory[1]
+
+            # 変更前後の数量差を計算
+            quantity_difference = (
+                history.purchase_quantity - previous_purchase_quantity
+            )
+
+            updated_stock_quantity = stock_quantity + quantity_difference
+
+            if updated_stock_quantity < 0:
+                raise ValueError("在庫数量がマイナスになるため修正できません。")
+
+            # 履歴を更新
+            cursor.execute("""
+                UPDATE purchase_history
+                SET
+                    status = '修正済み',
+                    purchase_quantity = %s,
+                    notes = %s,
+                    updated_at = CURRENT_DATE,
+                    updated_by = %s
+                WHERE purchase_id = %s
+            """, (
+                history.purchase_quantity,
+                history.notes,
+                user_id,
+                history.purchase_id
+            ))
+
+            # 在庫を差分だけ調整
+            add_inventory_quantity(
+                cursor,
+                history.product_id,
+                quantity_difference,
+                user_id
+            )
+
             conn.commit()
 
 
@@ -280,3 +270,105 @@ def get_purchase_histories():
 
             # 仕入履歴一覧を返す
             return purchase_histories
+
+
+# ==================
+# 仕入履歴キャンセル：新しい履歴を登録・在庫を減算
+# ==================
+
+def cancel_purchase_history(purchase_id, user_id):
+    with closing(get_connection()) as conn:
+        with closing(conn.cursor()) as cursor:
+            # キャンセル対象の仕入履歴を取得し、行をロック
+            cursor.execute("""
+                SELECT
+                    supplier_id,
+                    product_id,
+                    purchase_quantity,
+                    supplier_name,
+                    category,
+                    status,
+                    notes
+                FROM purchase_history
+                WHERE purchase_id = %s
+                FOR UPDATE
+            """, (purchase_id,))
+
+            history = cursor.fetchone()
+
+            if history is None:
+                raise ValueError("指定された仕入履歴番号は存在しません。")
+
+            (
+                supplier_id,
+                product_id,
+                purchase_quantity,
+                supplier_name,
+                category,
+                status,
+                notes
+            ) = history
+
+            # キャンセル履歴そのものはキャンセルできない
+            if status == "キャンセル":
+                raise ValueError("キャンセル履歴は再度キャンセルできません。")
+
+            # 既にキャンセルされている履歴か確認
+            cancellation_note = f"キャンセル元仕入履歴番号：{purchase_id}"
+
+            cursor.execute("""
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM purchase_history
+                    WHERE notes = %s
+                )
+            """, (cancellation_note,))
+
+            if cursor.fetchone()[0]:
+                raise ValueError("この仕入履歴は既にキャンセルされています。")
+
+            # 在庫を取得してロック
+            inventory = get_inventory_for_update(cursor, product_id)
+
+            if inventory is None:
+                raise ValueError("在庫レコードが存在しません。")
+
+            stock_quantity = inventory[1]
+
+            if stock_quantity < purchase_quantity:
+                raise ValueError("在庫数量がマイナスになるためキャンセルできません。")
+
+            # キャンセル履歴を新規登録
+            cursor.execute("""
+                INSERT INTO purchase_history (
+                    supplier_id,
+                    product_id,
+                    status,
+                    purchase_quantity,
+                    notes,
+                    supplier_name,
+                    category,
+                    created_at,
+                    created_by
+                )
+                VALUES (%s, %s, 'キャンセル', %s, %s, %s, %s, CURRENT_DATE, %s)
+            """, (
+                supplier_id,
+                product_id,
+                purchase_quantity,
+                cancellation_note,
+                supplier_name,
+                category,
+                user_id
+            ))
+
+            # 在庫を減らす
+            add_inventory_quantity(
+                cursor,
+                product_id,
+                -purchase_quantity,
+                user_id
+            )
+
+            # 仕入履歴のキャンセルと在庫の減算をまとめて確定
+            conn.commit()

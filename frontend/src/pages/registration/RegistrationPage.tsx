@@ -24,11 +24,35 @@ type Customer = {
   customer_name: string
 }
 
+// 登録データ
+type RegistrationData = {
+  registrationType: RegistrationType
+  productName: string
+  category: string
+  supplierId: string
+  supplierName: string
+  customerId: string
+  customerName: string
+  productId: string
+  selectedProductName: string
+  quantity: string
+  remarks: string
+}
+
 // 各種登録ページコンポーネント
 function RegistrationPage() {
+  const navigate = useNavigate()
+
+  // 確認画面から戻った場合の入力データを取得
+  const [savedData] = useState<RegistrationData | null>(() => {
+    const storedData = sessionStorage.getItem('registrationData')
+
+    return storedData ? JSON.parse(storedData) : null
+  })
+
   // 登録種別
   const [registrationType, setRegistrationType] =
-    useState<RegistrationType>('product')
+    useState<RegistrationType>(savedData?.registrationType ?? 'product')
 
   // マスタ情報
   const [products, setProducts] = useState<Product[]>([])
@@ -36,18 +60,16 @@ function RegistrationPage() {
   const [customers, setCustomers] = useState<Customer[]>([])
 
   // 入力項目
-  const [productName, setProductName] = useState('')
-  const [category, setCategory] = useState('')
-  const [supplierId, setSupplierId] = useState('')
-  const [customerId, setCustomerId] = useState('')
-  const [productId, setProductId] = useState('')
-  const [quantity, setQuantity] = useState('')
-  const [remarks, setRemarks] = useState('')
+  const [productName, setProductName] = useState(savedData?.productName ?? '')
+  const [category, setCategory] = useState(savedData?.category ?? '')
+  const [supplierId, setSupplierId] = useState(savedData?.supplierId ?? '')
+  const [customerId, setCustomerId] = useState(savedData?.customerId ?? '')
+  const [productId, setProductId] = useState(savedData?.productId ?? '')
+  const [quantity, setQuantity] = useState(savedData?.quantity ?? '')
+  const [remarks, setRemarks] = useState(savedData?.remarks ?? '')
 
   // エラー表示
   const [errorMessage, setErrorMessage] = useState('')
-
-  const navigate = useNavigate()
 
   // マスタ情報を取得
   useEffect(() => {
@@ -98,6 +120,9 @@ function RegistrationPage() {
     setQuantity('')
     setRemarks('')
     setErrorMessage('')
+
+    // 以前の登録データを削除
+    sessionStorage.removeItem('registrationData')
   }
 
   // 確認画面へ進む

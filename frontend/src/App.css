@@ -196,3 +196,113 @@
     padding: 18px; /* フォーム内部の余白を調整 */
   }
 }
+
+
+
+/* ==========================
+   仕入履歴一覧
+========================== */
+
+/* 表全体を囲む領域 */
+.history-table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: white;
+  border: 1px solid #e2e6eb;
+  border-radius: 8px;
+}
+
+/* 仕入履歴一覧のテーブル */
+.history-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* 表の見出し */
+.history-table th {
+  padding: 14px 16px;
+  background: #edf1f6;
+  color: #45546a;
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 1px solid #dce2e9;
+}
+
+/* 表のデータ */
+.history-table td {
+  padding: 14px 16px;
+  color: #263445;
+  border-bottom: 1px solid #e8ebef;
+  white-space: nowrap;
+}
+
+/* 最後の行の下線 */
+.history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* マウスを乗せた行 */
+.history-table tbody tr:hover {
+  background: #f7f9fc;
+}
+
+/* 履歴番号 */
+.history-table th:first-child,
+.history-table td:first-child {
+  text-align: center;
+}
+
+/* 数量 */
+.history-table th:nth-child(7),
+.history-table td:nth-child(7) {
+  text-align: right;
+}
+
+
+/* 操作ボタンの配置 */
+.history-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 修正ボタン */
+.history-edit-button {
+  padding: 7px 14px;
+  border: 1px solid #244a78;
+  border-radius: 5px;
+  background: white;
+  color: #244a78;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* 修正ボタンのマウスオーバー */
+.history-edit-button:hover {
+  background: #e5edf8;
+}
+
+/* キャンセルボタン */
+.history-cancel-button {
+  padding: 7px 14px;
+  border: 1px solid #c75b5b;
+  border-radius: 5px;
+  background: white;
+  color: #c75b5b;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* キャンセルボタンのマウスオーバー */
+.history-cancel-button:hover {
+  background: #fff0f0;
+}
+
+/* 操作列 */
+.history-table th:last-child,
+.history-table td:last-child {
+  text-align: center;
+}

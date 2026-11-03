@@ -1,4 +1,3 @@
-
 // CSSファイル読み込み
 import './App.css'
 
@@ -179,10 +178,6 @@ function AppContent() {
 
             {/* 仕入履歴編集 */}
             <Route
-              path="/purchase/history/edit"
-              element={<PurchaseHistoryEditPage />}
-            />
-            <Route
               path="/purchase/history/edit/confirm"
               element={<PurchaseHistoryEditConfirmPage />}
             />
@@ -190,12 +185,12 @@ function AppContent() {
               path="/purchase/history/edit/complete"
               element={<PurchaseHistoryEditCompletePage />}
             />
-
-            {/* 仕入履歴削除・キャンセル */}
             <Route
-              path="/purchase/history/delete"
-              element={<PurchaseHistoryDeletePage />}
+              path="/purchase/history/edit/:purchaseId"
+              element={<PurchaseHistoryEditPage />}
             />
+
+            {/* 仕入履歴キャンセル */}
             <Route
               path="/purchase/history/delete/confirm"
               element={<PurchaseHistoryDeleteConfirmPage />}
@@ -203,6 +198,10 @@ function AppContent() {
             <Route
               path="/purchase/history/delete/complete"
               element={<PurchaseHistoryDeleteCompletePage />}
+            />
+            <Route
+              path="/purchase/history/delete/:purchaseId"
+              element={<PurchaseHistoryDeletePage />}
             />
 
             {/* 販売履歴 */}
@@ -213,10 +212,6 @@ function AppContent() {
 
             {/* 販売履歴編集 */}
             <Route
-              path="/sales/history/edit"
-              element={<SalesHistoryEditPage />}
-            />
-            <Route
               path="/sales/history/edit/confirm"
               element={<SalesHistoryEditConfirmPage />}
             />
@@ -224,12 +219,12 @@ function AppContent() {
               path="/sales/history/edit/complete"
               element={<SalesHistoryEditCompletePage />}
             />
-
-            {/* 販売履歴削除・キャンセル */}
             <Route
-              path="/sales/history/delete"
-              element={<SalesHistoryDeletePage />}
+              path="/sales/history/edit/:salesId"
+              element={<SalesHistoryEditPage />}
             />
+
+            {/* 販売履歴キャンセル */}
             <Route
               path="/sales/history/delete/confirm"
               element={<SalesHistoryDeleteConfirmPage />}
@@ -237,6 +232,10 @@ function AppContent() {
             <Route
               path="/sales/history/delete/complete"
               element={<SalesHistoryDeleteCompletePage />}
+            />
+            <Route
+              path="/sales/history/delete/:salesId"
+              element={<SalesHistoryDeletePage />}
             />
 
           </Route>

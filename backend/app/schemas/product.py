@@ -85,6 +85,7 @@ class SalesCreate(BaseModel):
 # 販売履歴更新時に受け取るデータ
 class SalesUpdate(BaseModel):
     sales_id: int
+    customer_id: int
     product_id: int
     status: str
     sales_quantity: int

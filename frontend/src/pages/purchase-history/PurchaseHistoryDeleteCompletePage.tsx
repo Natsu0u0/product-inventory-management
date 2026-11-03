@@ -1,15 +1,56 @@
-// 購入履歴削除完了ページコンポーネント
+
+import { useNavigate } from 'react-router-dom'
+
+// 仕入履歴キャンセル完了ページコンポーネント
 function PurchaseHistoryDeleteCompletePage() {
-    return (
+  const navigate = useNavigate()
+
+  // 仕入履歴一覧へ戻る
+  const handleHistory = () => {
+    navigate('/purchase/history')
+  }
+
+  // トップページへ戻る
+  const handleHome = () => {
+    navigate('/')
+  }
+
+  return (
     <main className="main">
-      {/* メインコンテンツのページ見出し */}
       <div className="page-heading">
-        <h2>購入履歴削除完了</h2>
-        <p>購入履歴の削除が完了しました。</p>
+        <h2>仕入履歴キャンセル完了</h2>
+      </div>
+
+      <div className="form-container">
+        {/* 完了メッセージ */}
+        <div className="form-group" style={{ textAlign: 'center' }}>
+          <p>キャンセルが完了しました。</p>
+        </div>
+
+        {/* 操作ボタン */}
+        <div
+          className="form-actions"
+          style={{ justifyContent: 'center', gap: '16px' }}
+        >
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={handleHistory}
+          >
+            仕入履歴へ戻る
+          </button>
+
+          <button
+            type="button"
+            className="primary-button"
+            onClick={handleHome}
+          >
+            トップページへ戻る
+          </button>
+        </div>
       </div>
     </main>
   )
 }
 
-// 他のファイルからPurchaseHistoryDeleteCompletePageを使用できるようにする
 export default PurchaseHistoryDeleteCompletePage

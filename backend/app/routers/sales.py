@@ -7,7 +7,8 @@ from fastapi import APIRouter
 # 販売履歴の業務ロジックをインポート
 from app.services.sales_service import (
     get_sales_histories as service_get_sales_histories,
-    create_sales_history as service_create_sales_history
+    create_sales_history as service_create_sales_history,
+    cancel_sales_history as service_cancel_sales_history
 )
 
 # 販売履歴の入力スキーマをインポート
@@ -35,3 +36,12 @@ def get_sales_histories():
 @router.post("/sales/history")
 def create_sales_history(history: SalesCreate | SalesUpdate, user_id: int):
     return service_create_sales_history(history, user_id)
+
+
+# ==================
+# 販売履歴キャンセル
+# ==================
+
+@router.post("/sales/history/{sales_id}/cancel")
+def cancel_sales_history(sales_id: int, user_id: int):
+    return service_cancel_sales_history(sales_id, user_id)
