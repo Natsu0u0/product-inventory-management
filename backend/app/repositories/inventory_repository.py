@@ -130,3 +130,54 @@ def get_inventories():
 
             # 在庫一覧を返す
             return inventories
+
+
+# ==================
+# 在庫データ削除
+# ==================
+
+# 在庫数が0の場合、在庫データを削除する
+def delete_inventory(inventory_id):
+
+    # DBに接続
+    with closing(get_connection()) as conn:
+        try:
+            with closing(conn.cursor()) as cursor:
+
+                # 対象の在庫データを取得してロック
+                cursor.execute(
+                    """
+                    SELECT stock_quantity
+                    FROM inventories
+                    WHERE inventory_id = %s
+                    FOR UPDATE
+                    """,
+                    (inventory_id,)
+                )
+
+                inventory = cursor.fetchone()
+
+                # 対象データが存在しない場合
+                if inventory is None:
+                    return "not_found"
+
+                # 在庫が残っている場合
+                if inventory[0] > 0:
+                    return "stock_exists"
+
+                # 在庫データを削除
+                cursor.execute(
+                    """
+                    DELETE FROM inventories
+                    WHERE inventory_id = %s
+                    """,
+                    (inventory_id,)
+                )
+
+            conn.commit()
+
+            return "success"
+
+        except Exception:
+            conn.rollback()
+            raise
