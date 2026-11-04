@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom'
 
 // 登録データの型
@@ -62,9 +63,109 @@ function RegistrationConfirmPage() {
     navigate('/registration')
   }
 
-  // 完了画面へ進む
-  const handleRegister = () => {
-    navigate('/registration/complete')
+  // 登録処理
+  const handleRegister = async () => {
+    try {
+      // ログインユーザーIDを取得
+      const userId = sessionStorage.getItem('user_id')
+
+      if (!userId) {
+        alert('ログイン情報を取得できません。再度ログインしてください。')
+        return
+      }
+
+      let endpoint = ''
+      let requestBody = {}
+
+      // 商品登録の場合
+      if (registrationData.registrationType === 'product') {
+        endpoint = `/api/products?user_id=${userId}`
+
+        requestBody = {
+          category: registrationData.category,
+          product_name: registrationData.productName,
+        }
+      }
+
+      // 仕入登録の場合
+      else if (registrationData.registrationType === 'purchase') {
+        const supplierId = Number(registrationData.supplierId)
+        const productId = Number(registrationData.productId)
+        const quantity = Number(registrationData.quantity)
+
+        if (
+          !supplierId ||
+          !productId ||
+          !Number.isInteger(quantity) ||
+          quantity <= 0
+        ) {
+          alert('仕入先・商品・仕入数量を正しく入力してください。')
+          return
+        }
+
+        endpoint = `/api/purchase/history?user_id=${userId}`
+
+        requestBody = {
+          supplier_id: supplierId,
+          product_id: productId,
+          status: '新規',
+          purchase_quantity: quantity,
+          notes: registrationData.remarks,
+        }
+      }
+
+      // 販売登録の場合
+      else if (registrationData.registrationType === 'sales') {
+        const customerId = Number(registrationData.customerId)
+        const productId = Number(registrationData.productId)
+        const quantity = Number(registrationData.quantity)
+
+        if (
+          !customerId ||
+          !productId ||
+          !Number.isInteger(quantity) ||
+          quantity <= 0
+        ) {
+          alert('販売先・商品・販売数量を正しく入力してください。')
+          return
+        }
+
+        endpoint = `/api/sales/history?user_id=${userId}`
+
+        requestBody = {
+          customer_id: customerId,
+          product_id: productId,
+          status: '新規',
+          sales_quantity: quantity,
+          notes: registrationData.remarks,
+        }
+      }
+
+      // APIを呼び出す
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
+
+      // APIの処理結果を確認
+      if (!response.ok) {
+        const errorText = await response.text()
+
+        console.error('HTTPステータス:', response.status)
+        console.error('APIレスポンス:', errorText)
+
+        throw new Error('登録に失敗しました。')
+      }
+
+      // 登録成功後に完了画面へ進む
+      navigate('/registration/complete')
+    } catch (error) {
+      console.error('登録エラー:', error)
+      alert('登録に失敗しました。入力内容や通信状況を確認してください。')
+    }
   }
 
   return (

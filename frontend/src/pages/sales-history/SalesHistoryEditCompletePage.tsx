@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom'
 
 // 販売履歴編集完了ページコンポーネント
@@ -19,36 +18,40 @@ function SalesHistoryEditCompletePage() {
 
   return (
     <main className="main">
-      {/* メインコンテンツのページ見出し */}
       <div className="page-heading">
-        <h2>販売履歴編集完了</h2>
-        <p>販売履歴の編集が完了しました。</p>
+        <h2>販売履歴修正完了</h2>
       </div>
 
-      {/* 操作ボタン */}
-      <div
-        className="form-actions"
-        style={{ justifyContent: 'center', gap: '16px' }}
-      >
-        <button
-          type="button"
-          className="secondary-button"
-          onClick={handleHistory}
-        >
-          販売履歴へ戻る
-        </button>
+      <div className="form-container">
+        {/* 完了メッセージ */}
+        <div className="form-group" style={{ textAlign: 'center' }}>
+          <p>販売履歴の修正が完了しました。</p>
+        </div>
 
-        <button
-          type="button"
-          className="primary-button"
-          onClick={handleHome}
+        {/* 操作ボタン */}
+        <div
+          className="form-actions"
+          style={{ justifyContent: 'center', gap: '16px' }}
         >
-          トップページへ戻る
-        </button>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={handleHistory}
+          >
+            販売履歴へ戻る
+          </button>
+
+          <button
+            type="button"
+            className="primary-button"
+            onClick={handleHome}
+          >
+            トップページへ戻る
+          </button>
+        </div>
       </div>
     </main>
   )
 }
 
-// 他のファイルからSalesHistoryEditCompletePageを使用できるようにする
 export default SalesHistoryEditCompletePage

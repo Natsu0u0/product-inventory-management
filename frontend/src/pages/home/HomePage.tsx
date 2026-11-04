@@ -21,7 +21,7 @@ function HomePage({ isLoggedIn }: { isLoggedIn: boolean }) {
         {showLoginButton && (
           <button
             type="button"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/login')}
           >
             ログイン
           </button>
